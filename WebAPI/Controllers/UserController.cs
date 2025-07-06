@@ -34,9 +34,8 @@ namespace WebAPI.Controllers
         {
             var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            //var response = _categoryService.EditCategory(id, request);
-            //return HandleResponse(response);
-            return Ok();
+            var response = _userService.EditUser(id, request, username);
+            return HandleResponse(response);
         }
 
         [HttpDelete("{id}")]

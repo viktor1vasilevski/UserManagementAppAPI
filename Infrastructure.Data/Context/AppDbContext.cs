@@ -30,7 +30,6 @@ public class AppDbContext : DbContext
             if (entityEntry.State == EntityState.Added)
             {
                 ((AuditableBaseEntity)entityEntry.Entity).Created = DateTime.Now;
-                
             }
             else
             {

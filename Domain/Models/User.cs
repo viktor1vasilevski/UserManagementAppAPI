@@ -47,7 +47,7 @@ public class User : AuditableBaseEntity
             Role = role,
             IsActive = isActive,
             CreatedBy = createdBy,
-            Created = DateTime.UtcNow
+            Created = DateTime.Now
         };
     }
 
@@ -60,7 +60,6 @@ public class User : AuditableBaseEntity
         IsActive = isActive;
         Role = role;
         LastModifiedBy = modifiedBy;
-        LastModified = DateTime.UtcNow;
     }
 
     public bool VerifyPassword(string inputPassword)
@@ -77,7 +76,6 @@ public class User : AuditableBaseEntity
         PasswordHash = PasswordHelper.HashPassword(newPassword, newSalt);
         SaltKey = Convert.ToBase64String(newSalt);
         LastModifiedBy = modifiedBy;
-        LastModified = DateTime.UtcNow;
     }
 
     private static void ValidateRequired(string value, string fieldName)

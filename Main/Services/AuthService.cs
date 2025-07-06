@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Main.Services;
@@ -22,6 +21,7 @@ namespace Main.Services;
 public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configuration, ILogger<AuthService> _logger) : IAuthService
 {
     private readonly IGenericRepository<User> _userRepository = _uow.GetGenericRepository<User>();
+
     public async Task<ApiResponse<UserLoginDTO>> UserLoginAsync(UserLoginRequest request)
     {
         var response = await _userRepository.GetAsync(x => x.Username.ToLower() == request.Username.ToLower());
