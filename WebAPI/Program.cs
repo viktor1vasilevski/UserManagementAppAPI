@@ -52,7 +52,7 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        var password = builder.Configuration["AdminPassword"];
+        var password = builder.Configuration["SeedAdmin:Password"];
         AppDbContextSeed.SeedAdminUser(dbContext, password);
     }
     catch (Exception ex)
