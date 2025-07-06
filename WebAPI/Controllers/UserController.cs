@@ -18,8 +18,6 @@ namespace WebAPI.Controllers
         [HttpGet]
         public IActionResult Get([FromQuery] UserRequest request)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             var response = _userService.GetUsers(request);
             return HandleResponse(response);
         }
@@ -29,6 +27,16 @@ namespace WebAPI.Controllers
         {
             var response = _userService.GetUserById(id);
             return HandleResponse(response);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Edit([FromRoute] Guid id, [FromBody] EditUserRequest request)
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            //var response = _categoryService.EditCategory(id, request);
+            //return HandleResponse(response);
+            return Ok();
         }
 
         [HttpDelete("{id}")]

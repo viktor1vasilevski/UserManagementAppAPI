@@ -26,7 +26,6 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterRequest request)
         {
             var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             var response = await _authService.UserRegisterAsync(request, username);
             return HandleResponse(response);
         }

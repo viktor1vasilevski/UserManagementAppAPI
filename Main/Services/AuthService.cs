@@ -1,11 +1,11 @@
 ﻿using Domain.Enums;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data.Context;
 using Main.Constants;
 using Main.DTOs.Auth;
 using Main.Enums;
-using Main.Helpers;
 using Main.Interfaces;
 using Main.Requests.Auth;
 using Main.Responses;
@@ -28,26 +28,20 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
         var user = response?.FirstOrDefault();
 
         if (user is null)
-        {
             return new ApiResponse<UserLoginDTO>
             {
                 Message = AuthConstants.USER_NOT_FOUND,
                 Success = false,
                 NotificationType = NotificationType.NotFound
             };
-        }
 
-        var isPasswordValid = PasswordHasher.VerifyPassword(request.Password, user.PasswordHash, user.SaltKey);
-
-        if (!isPasswordValid)
-        {
+        if (!user.VerifyPassword(request.Password))
             return new ApiResponse<UserLoginDTO>
             {
                 Message = AuthConstants.INVALID_PASSWORD,
                 Success = false,
                 NotificationType = NotificationType.NotFound
             };
-        }
 
         var token = user.Role == Role.Admin ? GenerateJwtToken(user) : null;
 
@@ -69,8 +63,8 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
 
     public async Task<ApiResponse<UserRegisterDTO>> UserRegisterAsync(UserRegisterRequest request, string createdBy)
     {
-        var userExist = await _userRepository.ExistsAsync(x => x.Email.ToLower() == request.Email.ToLower() || 
-            x.Username.ToLower() == request.Username.ToLower());
+        var userExist = await _userRepository.ExistsAsync(x =>
+            x.Email.ToLower() == request.Email.ToLower() || x.Username.ToLower() == request.Username.ToLower());
 
         if (userExist)
             return new ApiResponse<UserRegisterDTO>
@@ -80,44 +74,38 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
                 Message = AuthConstants.ACCOUNT_ALREADY_EXISTS
             };
 
-        var saltKey = GenerateSalt();
-        var hash = PasswordHasher.HashPassword(request.Password, saltKey);
-
-        var user = new User
+        try
         {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Username = request.Username,
-            Role = request.Role,
-            Email = request.Email,
-            PasswordHash = hash,
-            SaltKey = Convert.ToBase64String(saltKey),
-            IsActive = request.IsActive,
-            CreatedBy = createdBy
-        };
+            var user = User.CreateNew(
+                firstName: request.FirstName,
+                lastName: request.LastName,
+                username: request.Username,
+                email: request.Email,
+                password: request.Password,
+                role: request.Role,
+                isActive: request.IsActive,
+                createdBy: createdBy);
 
-        await _userRepository.InsertAsync(user);
-        await _uow.SaveChangesAsync();
+            await _userRepository.InsertAsync(user);
+            await _uow.SaveChangesAsync();
 
-        return new ApiResponse<UserRegisterDTO>
-        {
-            Success = true,
-            NotificationType = NotificationType.Success,
-            Message = AuthConstants.CUSTOMER_REGISTER_SUCCESS,
-            Data = new UserRegisterDTO { Username = user.Username }
-        };
-    }
-
-
-    private static byte[] GenerateSalt(int size = 16)
-    {
-        byte[] salt = new byte[size];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(salt);
+            return new ApiResponse<UserRegisterDTO>
+            {
+                Success = true,
+                NotificationType = NotificationType.Success,
+                Message = AuthConstants.CUSTOMER_REGISTER_SUCCESS,
+                Data = new UserRegisterDTO { Username = user.Username }
+            };
         }
-
-        return salt;
+        catch (DomainValidationException ex)
+        {
+            return new ApiResponse<UserRegisterDTO>
+            {
+                Success = false,
+                NotificationType = NotificationType.BadRequest,
+                Message = ex.Message
+            };
+        }
     }
 
     private string GenerateJwtToken(User user)

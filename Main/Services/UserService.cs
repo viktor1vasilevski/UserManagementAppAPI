@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data.Context;
@@ -46,6 +47,54 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
             Message = UserConstants.UserDeletedSuccessfully,
             NotificationType = NotificationType.Success
         };
+    }
+
+    public ApiResponse<UserDetailsDTO> EditUser(Guid id, EditUserRequest request, string modifiedBy)
+    {
+        var user = _userRepository.GetById(id);
+        if (user is null)
+            return new ApiResponse<UserDetailsDTO>
+            {
+                Success = false,
+                NotificationType = NotificationType.NotFound,
+                Message = AuthConstants.USER_NOT_FOUND
+            };
+
+        try
+        {
+            user.ApplyChanges(request.FirstName, request.LastName, request.IsActive, request.Role, modifiedBy);
+            _userRepository.Update(user);
+            _uow.SaveChanges();
+
+            return new ApiResponse<UserDetailsDTO>
+            {
+                Success = true,
+                NotificationType = NotificationType.Success,
+                Message = UserConstants.UserUpdatedSuccessfully,
+                Data = new UserDetailsDTO 
+                { 
+                    Id = id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Username = user.Username,
+                    IsActive = user.IsActive,
+                    Role = user.Role.ToString(),
+                    CreatedBy = user.CreatedBy,
+                    Created = user.Created,
+                    LastModifiedBy = user.LastModifiedBy,
+                    LastModified = user.LastModified
+                }
+            };
+        }
+        catch (DomainValidationException ex)
+        {
+            return new ApiResponse<UserDetailsDTO>
+            {
+                Success = false,
+                NotificationType = NotificationType.BadRequest,
+                Message = ex.Message
+            };
+        }
     }
 
     public ApiResponse<UserDTO> GetUserById(Guid id)

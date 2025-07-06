@@ -1,10 +1,7 @@
-using Domain.Enums;
 using Domain.Interfaces;
-using Domain.Models;
 using Infrastructure.Data.Context;
 using Infrastructure.Data.Repositories;
 using Infrastructure.IoC;
-using Main.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -51,43 +48,16 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var serviceProvider = scope.ServiceProvider;
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
     try
     {
-        var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-        dbContext.Database.Migrate();
-
-        var adminExist = dbContext.Users.Any(x => x.Role == Role.Admin);
-
-        if (!adminExist)
-        {
-
-            var saltKey = PasswordHasher.GenerateSalt();
-            var adminUser = new User
-            {
-                FirstName = "Admin",
-                LastName = "Admin",
-                Email = "admin@example.com",
-                Username = "admin",
-                Role = Role.Admin,
-                PasswordHash = PasswordHasher.HashPassword("Admin@123", saltKey),
-                SaltKey = Convert.ToBase64String(saltKey),
-                IsActive = true,
-                CreatedBy = "Admin",
-                Created = DateTime.Now,
-                LastModifiedBy = null,
-                LastModified = null
-            };
-
-            dbContext.Users.Add(adminUser);
-            dbContext.SaveChanges();
-
-        }
+        var password = builder.Configuration["AdminPassword"];
+        AppDbContextSeed.SeedAdminUser(dbContext, password);
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Error during admin user setup: {ex.Message}");
+        Console.WriteLine($"Error during admin user seeding: {ex.Message}");
     }
 }
 
