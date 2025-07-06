@@ -24,6 +24,13 @@ namespace WebAPI.Controllers
             return HandleResponse(response);
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetById([FromRoute] Guid id)
+        {
+            var response = _userService.GetUserById(id);
+            return HandleResponse(response);
+        }
+
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] Guid id)
         {

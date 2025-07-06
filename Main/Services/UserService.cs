@@ -48,7 +48,34 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
         };
     }
 
-    public ApiResponse<List<UserDTO>> GetUsers(UserRequest request)
+    public ApiResponse<UserDTO> GetUserById(Guid id)
+    {
+        var user = _userRepository.GetById(id);
+
+        if (user is null)
+            return new ApiResponse<UserDTO>
+            {
+                Success = false,
+                NotificationType = NotificationType.NotFound,
+                Message = UserConstants.UserNotFound
+            };
+
+        return new ApiResponse<UserDTO>
+        {
+            Success = true,
+            NotificationType = NotificationType.Success,
+            Data = new UserDTO
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Role = user.Role,
+                IsActive = user.IsActive
+            }
+        };
+    }
+
+    public ApiResponse<List<UserDetailsDTO>> GetUsers(UserRequest request)
     {
         var products = _userRepository.GetAsQueryableWhereIf(x =>         
             x.WhereIf(!String.IsNullOrEmpty(request.Username), x => x.Username.ToLower().Contains(request.Username.ToLower())));
@@ -61,7 +88,7 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
         if (request.Take.HasValue)
             products = products.Take(request.Take.Value);
 
-        var usersDTO = products.Select(x => new UserDTO
+        var usersDTO = products.Select(x => new UserDetailsDTO
         {
             Id = x.Id,
             FirstName = x.FirstName,
@@ -76,7 +103,7 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
             LastModifiedBy = x.LastModifiedBy
         }).ToList();
 
-        return new ApiResponse<List<UserDTO>>()
+        return new ApiResponse<List<UserDetailsDTO>>()
         {
             Success = true,
             Data = usersDTO,
