@@ -1,0 +1,87 @@
+﻿using Domain.Enums;
+using Domain.Interfaces;
+using Domain.Models;
+using Infrastructure.Data.Context;
+using Main.Constants;
+using Main.DTOs.User;
+using Main.Enums;
+using Main.Extension;
+using Main.Interfaces;
+using Main.Requests.User;
+using Main.Responses;
+using Microsoft.Extensions.Logging;
+
+namespace Main.Services;
+
+public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _logger) : IUserService
+{
+    private readonly IGenericRepository<User> _userRepository = _uow.GetGenericRepository<User>();
+
+    public ApiResponse<string> DeleteUser(Guid id)
+    {
+        var user = _userRepository.GetById(id);
+
+        if (user is null)
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Message = UserConstants.UserNotFound,
+                NotificationType = NotificationType.NotFound
+            };
+
+        if (user.Username.ToLower() == "admin" && user.Role == Role.Admin && user.IsActive)
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Message = UserConstants.CannotDeleteSuperAdmin,
+                NotificationType = NotificationType.Conflict
+            };
+
+        _userRepository.Delete(user);
+        _uow.SaveChanges();
+
+        return new ApiResponse<string>
+        {
+            Success = true,
+            Message = UserConstants.UserDeletedSuccessfully,
+            NotificationType = NotificationType.Success
+        };
+    }
+
+    public ApiResponse<List<UserDTO>> GetUsers(UserRequest request)
+    {
+        var products = _userRepository.GetAsQueryableWhereIf(x =>         
+            x.WhereIf(!String.IsNullOrEmpty(request.Username), x => x.Username.ToLower().Contains(request.Username.ToLower())));
+
+        var totalCount = products.Count();
+
+        if (request.Skip.HasValue)
+            products = products.Skip(request.Skip.Value);
+
+        if (request.Take.HasValue)
+            products = products.Take(request.Take.Value);
+
+        var usersDTO = products.Select(x => new UserDTO
+        {
+            Id = x.Id,
+            FirstName = x.FirstName,
+            LastName = x.LastName,
+            Username = x.Username,
+            Email = x.Email,
+            Role = x.Role.ToString(),
+            IsActive = x.IsActive,
+            Created = x.Created,
+            CreatedBy = x.CreatedBy,
+            LastModified = x.LastModified,
+            LastModifiedBy = x.LastModifiedBy
+        }).ToList();
+
+        return new ApiResponse<List<UserDTO>>()
+        {
+            Success = true,
+            Data = usersDTO,
+            TotalCount = totalCount,
+            NotificationType = NotificationType.Success
+        };
+    }
+}

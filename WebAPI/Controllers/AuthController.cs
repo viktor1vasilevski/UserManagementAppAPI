@@ -1,0 +1,35 @@
+﻿using Main.Interfaces;
+using Main.Requests.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace WebAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController(IAuthService authService) : BaseController
+    {
+        private readonly IAuthService _authService = authService;
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromBody] UserLoginRequest request)
+        {
+            var response = await _authService.UserLoginAsync(request);
+            return HandleResponse(response);
+        }
+
+        [HttpPost("register")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterRequest request)
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var response = await _authService.UserRegisterAsync(request, username);
+            return HandleResponse(response);
+        }
+
+    }
+}
