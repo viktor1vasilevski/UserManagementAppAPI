@@ -93,7 +93,18 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
                 Success = true,
                 NotificationType = NotificationType.Success,
                 Message = AuthConstants.CustomerRegisterSuccess,
-                Data = new UserRegisterDTO { Username = user.Username }
+                Data = new UserRegisterDTO 
+                { 
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Username = user.Username,
+                    Email = user.Email,
+                    IsActive = user.IsActive,
+                    Role = user.Role,
+                    Created = user.Created,
+                    CreatedBy = user.CreatedBy,
+                }
             };
         }
         catch (DomainValidationException ex)
