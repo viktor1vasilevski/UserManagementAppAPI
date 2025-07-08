@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Enums;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data.Context;
@@ -42,8 +43,7 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
                 NotificationType = NotificationType.NotFound
             };
 
-        //var token = user.Role == Role.Admin ? GenerateJwtToken(user) : null;
-        var token = GenerateJwtToken(user);
+        var token = user.Role == Role.Admin && user.IsActive ? GenerateJwtToken(user) : null;
 
         return new ApiResponse<UserLoginDTO>
         {

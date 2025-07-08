@@ -6,7 +6,7 @@ using System.Text;
 
 namespace WebAPI.Extensions
 {
-    public static class JwtServiceExtensions
+    public static class ServiceCollectionExtension
     {
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {

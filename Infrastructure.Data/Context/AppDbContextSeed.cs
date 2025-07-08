@@ -10,7 +10,7 @@ public static class AppDbContextSeed
     {
         context.Database.Migrate();
 
-        if (context.Users.Any(x => x.Role == Role.Admin))
+        if (context.Users.Any(x => x.Role == Role.Admin && x.IsActive && x.Username.ToLower() == "admin"))
             return;
 
         var adminUser = User.CreateNew(

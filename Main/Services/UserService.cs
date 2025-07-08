@@ -60,6 +60,14 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
                 Message = AuthConstants.USER_NOT_FOUND
             };
 
+        if (user.Username.ToLower() == "admin" && user.Role == Role.Admin && user.IsActive)
+            return new ApiResponse<UserDetailsDTO>
+            {
+                Success = false,
+                Message = UserConstants.CannotEditSuperAdmin,
+                NotificationType = NotificationType.Conflict
+            };
+
         try
         {
             user.ApplyChanges(request.FirstName, request.LastName, request.IsActive, request.Role);
