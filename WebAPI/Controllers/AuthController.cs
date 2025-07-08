@@ -27,13 +27,5 @@ namespace WebAPI.Controllers
             var response = await _authService.UserRegisterAsync(request);
             return HandleResponse(response);
         }
-
-        [HttpPost("test")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-        public async Task<IActionResult> Test()
-        {
-            return Ok();
-        }
-
     }
 }
