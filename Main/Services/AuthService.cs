@@ -30,7 +30,7 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
         if (user is null)
             return new ApiResponse<UserLoginDTO>
             {
-                Message = AuthConstants.USER_NOT_FOUND,
+                Message = AuthConstants.UserNotFound,
                 Success = false,
                 NotificationType = NotificationType.NotFound
             };
@@ -38,7 +38,7 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
         if (!user.VerifyPassword(request.Password))
             return new ApiResponse<UserLoginDTO>
             {
-                Message = AuthConstants.INVALID_PASSWORD,
+                Message = AuthConstants.InvalidPassword,
                 Success = false,
                 NotificationType = NotificationType.NotFound
             };
@@ -49,7 +49,7 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
         {
             Success = true,
             NotificationType = NotificationType.Success,
-            Message = AuthConstants.USER_LOGIN_SUCCESS,
+            Message = AuthConstants.UserLoginSuccess,
             Data = new UserLoginDTO
             {
                 Id = user.Id,
@@ -71,7 +71,7 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
             {
                 Success = false,
                 NotificationType = NotificationType.Conflict,
-                Message = AuthConstants.ACCOUNT_ALREADY_EXISTS
+                Message = AuthConstants.AccountAlreadyExists
             };
 
         try
@@ -92,7 +92,7 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
             {
                 Success = true,
                 NotificationType = NotificationType.Success,
-                Message = AuthConstants.CUSTOMER_REGISTER_SUCCESS,
+                Message = AuthConstants.CustomerRegisterSuccess,
                 Data = new UserRegisterDTO { Username = user.Username }
             };
         }

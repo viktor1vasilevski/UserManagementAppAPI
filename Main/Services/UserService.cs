@@ -30,7 +30,7 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
                 NotificationType = NotificationType.NotFound
             };
 
-        if (user.Username.ToLower() == "admin" && user.Role == Role.Admin && user.IsActive)
+        if (user.Username.ToLower() == AuthConstants.Admin && user.Role == Role.Admin && user.IsActive)
             return new ApiResponse<string>
             {
                 Success = false,
@@ -57,10 +57,10 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
             {
                 Success = false,
                 NotificationType = NotificationType.NotFound,
-                Message = AuthConstants.USER_NOT_FOUND
+                Message = AuthConstants.UserNotFound
             };
 
-        if (user.Username.ToLower() == "admin" && user.Role == Role.Admin && user.IsActive)
+        if (user.Username.ToLower() == AuthConstants.Admin && user.Role == Role.Admin && user.IsActive)
             return new ApiResponse<UserDetailsDTO>
             {
                 Success = false,
