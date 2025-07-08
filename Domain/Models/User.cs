@@ -25,13 +25,12 @@ public class User : AuditableBaseEntity
         string email,
         string password,
         Role role,
-        bool isActive,
-        string createdBy)
+        bool isActive)
     {
         ValidateRequired(username, nameof(username));
         ValidateRequired(email, nameof(email));
         ValidateRequired(password, "Password");
-        ValidateCoreFields(firstName, lastName, role, createdBy, "CreatedBy");
+        ValidateCoreFields(firstName, lastName, role);
 
         var salt = PasswordHelper.GenerateSalt();
         var hash = PasswordHelper.HashPassword(password, salt);
@@ -46,36 +45,22 @@ public class User : AuditableBaseEntity
             SaltKey = Convert.ToBase64String(salt),
             Role = role,
             IsActive = isActive,
-            CreatedBy = createdBy,
-            Created = DateTime.Now
         };
     }
 
-    public void ApplyChanges(string firstName, string lastName, bool isActive, Role role, string modifiedBy)
+    public void ApplyChanges(string firstName, string lastName, bool isActive, Role role)
     {
-        ValidateCoreFields(firstName, lastName, role, modifiedBy, "LastModifiedBy");
+        ValidateCoreFields(firstName, lastName, role);
 
         FirstName = firstName;
         LastName = lastName;
         IsActive = isActive;
         Role = role;
-        LastModifiedBy = modifiedBy;
     }
 
     public bool VerifyPassword(string inputPassword)
     {
         return PasswordHelper.VerifyPassword(inputPassword, PasswordHash, SaltKey);
-    }
-
-    public void ChangePassword(string newPassword, string modifiedBy)
-    {
-        ValidateRequired(newPassword, "NewPassword");
-        ValidateRequired(modifiedBy, "ModifiedBy");
-
-        var newSalt = PasswordHelper.GenerateSalt();
-        PasswordHash = PasswordHelper.HashPassword(newPassword, newSalt);
-        SaltKey = Convert.ToBase64String(newSalt);
-        LastModifiedBy = modifiedBy;
     }
 
     private static void ValidateRequired(string value, string fieldName)
@@ -84,14 +69,12 @@ public class User : AuditableBaseEntity
             throw new DomainValidationException($"{fieldName} cannot be empty.");
     }
 
-    private static void ValidateCoreFields(string firstName, string lastName, Role role, string userRef, string userRefName)
+    private static void ValidateCoreFields(string firstName, string lastName, Role role)
     {
         ValidateRequired(firstName, nameof(firstName));
         ValidateRequired(lastName, nameof(lastName));
 
         if (!Enum.IsDefined(typeof(Role), role))
             throw new DomainValidationException("Invalid user role specified.");
-
-        ValidateRequired(userRef, userRefName);
     }
 }

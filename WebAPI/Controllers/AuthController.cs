@@ -3,7 +3,6 @@ using Main.Requests.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace WebAPI.Controllers
 {
@@ -25,9 +24,15 @@ namespace WebAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterRequest request)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var response = await _authService.UserRegisterAsync(request, username);
+            var response = await _authService.UserRegisterAsync(request);
             return HandleResponse(response);
+        }
+
+        [HttpPost("test")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<IActionResult> Test()
+        {
+            return Ok();
         }
 
     }

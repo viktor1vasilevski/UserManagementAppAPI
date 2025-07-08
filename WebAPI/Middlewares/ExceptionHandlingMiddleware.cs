@@ -1,4 +1,5 @@
 ﻿
+using Domain.Exceptions;
 using System.Text.Json;
 
 namespace WebAPI.Middlewares;
@@ -32,7 +33,7 @@ public class ExceptionHandlingMiddleware
 
         var statusCode = ex switch
         {
-            //DomainValidationException => StatusCodes.Status400BadRequest,
+            DomainValidationException => StatusCodes.Status400BadRequest,
             KeyNotFoundException => StatusCodes.Status404NotFound,
             UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
             _ => StatusCodes.Status500InternalServerError

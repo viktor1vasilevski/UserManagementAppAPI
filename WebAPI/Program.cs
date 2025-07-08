@@ -1,11 +1,12 @@
 using Domain.Interfaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Infrastructure.Data.Context;
 using Infrastructure.Data.Repositories;
 using Infrastructure.IoC;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Main.Validations.Auth;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using WebAPI.Extensions;
 using WebAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddCors(policy => policy.AddPolicy("MyPolicy", builder =>
 {
@@ -24,25 +26,12 @@ builder.Services.AddCors(policy => policy.AddPolicy("MyPolicy", builder =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-var singingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]));
-var tokenValidationParameters = new TokenValidationParameters()
-{
-    IssuerSigningKey = singingKey,
-    ValidateIssuer = false,
-    ValidateAudience = false,
-    ValidateLifetime = true,
-    ClockSkew = TimeSpan.Zero
-};
-
-builder.Services.AddAuthentication(x => x.DefaultAuthenticateScheme = JwtBearerDefaults
-        .AuthenticationScheme)
-        .AddJwtBearer(jwt =>
-        {
-            jwt.TokenValidationParameters = tokenValidationParameters;
-        });
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddScoped(typeof(IUnitOfWork<>), typeof(SqlUnitOfWork<>));
 builder.Services.AddIoCService();
+builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterRequestValidator>(ServiceLifetime.Transient);
+builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();
 
@@ -69,6 +58,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors("MyPolicy");

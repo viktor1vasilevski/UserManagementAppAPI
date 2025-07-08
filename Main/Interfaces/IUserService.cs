@@ -8,6 +8,6 @@ public interface IUserService
 {
     ApiResponse<List<UserDetailsDTO>> GetUsers(UserRequest request);
     ApiResponse<UserDTO> GetUserById(Guid id);
-    ApiResponse<UserDetailsDTO> EditUser(Guid id, EditUserRequest request, string modifiedBy);
+    ApiResponse<UserDetailsDTO> EditUser(Guid id, EditUserRequest request);
     ApiResponse<string> DeleteUser(Guid id);
 }

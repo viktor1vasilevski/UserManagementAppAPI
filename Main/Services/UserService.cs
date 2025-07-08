@@ -49,7 +49,7 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
         };
     }
 
-    public ApiResponse<UserDetailsDTO> EditUser(Guid id, EditUserRequest request, string modifiedBy)
+    public ApiResponse<UserDetailsDTO> EditUser(Guid id, EditUserRequest request)
     {
         var user = _userRepository.GetById(id);
         if (user is null)
@@ -62,7 +62,7 @@ public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _l
 
         try
         {
-            user.ApplyChanges(request.FirstName, request.LastName, request.IsActive, request.Role, modifiedBy);
+            user.ApplyChanges(request.FirstName, request.LastName, request.IsActive, request.Role);
             _userRepository.Update(user);
             _uow.SaveChanges();
 

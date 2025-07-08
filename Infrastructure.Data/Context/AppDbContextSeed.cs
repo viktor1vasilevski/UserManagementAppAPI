@@ -20,8 +20,7 @@ public static class AppDbContextSeed
             email: "admin@example.com",
             password: password,
             role: Role.Admin,
-            isActive: true,
-            createdBy: "admin");
+            isActive: true);
 
         context.Users.Add(adminUser);
         context.SaveChanges();

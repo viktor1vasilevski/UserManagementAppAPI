@@ -3,7 +3,6 @@ using Main.Requests.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace WebAPI.Controllers
 {
@@ -32,9 +31,7 @@ namespace WebAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Edit([FromRoute] Guid id, [FromBody] EditUserRequest request)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var response = _userService.EditUser(id, request, username);
+            var response = _userService.EditUser(id, request);
             return HandleResponse(response);
         }
 

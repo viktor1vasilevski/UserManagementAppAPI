@@ -1,5 +1,4 @@
-﻿using Domain.Enums;
-using Domain.Exceptions;
+﻿using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data.Context;
@@ -43,7 +42,8 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
                 NotificationType = NotificationType.NotFound
             };
 
-        var token = user.Role == Role.Admin ? GenerateJwtToken(user) : null;
+        //var token = user.Role == Role.Admin ? GenerateJwtToken(user) : null;
+        var token = GenerateJwtToken(user);
 
         return new ApiResponse<UserLoginDTO>
         {
@@ -61,7 +61,7 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
         };
     }
 
-    public async Task<ApiResponse<UserRegisterDTO>> UserRegisterAsync(UserRegisterRequest request, string createdBy)
+    public async Task<ApiResponse<UserRegisterDTO>> UserRegisterAsync(UserRegisterRequest request)
     {
         var userExist = await _userRepository.ExistsAsync(x =>
             x.Email.ToLower() == request.Email.ToLower() || x.Username.ToLower() == request.Username.ToLower());
@@ -83,8 +83,7 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
                 email: request.Email,
                 password: request.Password,
                 role: request.Role,
-                isActive: request.IsActive,
-                createdBy: createdBy);
+                isActive: request.IsActive);
 
             await _userRepository.InsertAsync(user);
             await _uow.SaveChangesAsync();
@@ -117,7 +116,8 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
         var claims = new[] 
         { 
             new Claim(ClaimTypes.Role, user.Role.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Username)
+            new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+            new Claim(ClaimTypes.Name, user.Username)
         };
 
         var token = new JwtSecurityToken(
