@@ -53,3 +53,15 @@ This project is organized into five main layers to separate concerns and promote
   - `DELETE /user/{id}` — Delete a user (requires authorization).
 
 
+## Authentication & Authorization
+
+- The API uses **JWT (JSON Web Tokens)** for stateless authentication.
+- Users register with a username and password via the `/auth/register` endpoint.
+- Upon successful login at `/auth/login`, the API returns a JWT token.
+- This token must be included in the `Authorization` header as a Bearer token for protected endpoints.
+- Role-based authorization is implemented to restrict access:
+  - Users have roles such as `Admin` and `User`.
+  - Certain endpoints (like user management) require an `Admin` role.
+- Unauthorized requests or requests with invalid tokens receive appropriate HTTP status codes (`401 Unauthorized` or `403 Forbidden`).
+
+
