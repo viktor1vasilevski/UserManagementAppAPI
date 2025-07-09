@@ -65,3 +65,21 @@ This project is organized into five main layers to separate concerns and promote
 - Unauthorized requests or requests with invalid tokens receive appropriate HTTP status codes (`401 Unauthorized` or `403 Forbidden`).
 
 
+## Configuration / Environment Variables
+
+This project uses `appsettings.json` to manage configuration settings, including database connection, JWT authentication, and initial admin user seeding.
+
+### Key Configuration Sections
+
+- **ConnectionStrings**  
+  Defines the database connection string used by Entity Framework Core.  
+  Example:  
+  ```json
+  {
+    "ConnectionStrings": {
+      "DefaultConnection": "Server=localhost;Database=UserManagementDB;Trusted_Connection=True;Encrypt=False"
+    }
+  }
+
+
+
