@@ -37,3 +37,19 @@ This project is organized into five main layers to separate concerns and promote
 - An initial **admin** is seeded into the database during startup using a configurable password from the application settings.
 - Data access follows the **Repository** and **Unit of Work** patterns to encapsulate database operations and maintain transaction integrity.
 
+
+## API Documentation
+
+- The API exposes RESTful endpoints for user registration, authentication, and user management.
+- Endpoints follow REST conventions with appropriate HTTP methods and status codes.
+- Since this is an interview project, no automated API documentation (like Swagger) is currently included.
+- You can explore and test the API using tools like Postman or curl with the following endpoints:
+
+  - `POST /auth/register` — Register a new user (requires authorization).
+  - `POST /auth/login` — Authenticate a user and receive a JWT token.
+  - `GET /user` — Retrieve a list of users (requires authorization).
+  - `GET /user/{id}` — Retrieve user details by ID (requires authorization).
+  - `PUT /user/{id}` — Update user details (requires authorization).
+  - `DELETE /user/{id}` — Delete a user (requires authorization).
+
+
