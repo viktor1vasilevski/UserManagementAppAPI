@@ -66,7 +66,7 @@ This project is organized into five main layers to separate concerns and promote
 
 ## Configuration / Environment Variables
 
-This project uses `appsettings.json` to manage configuration settings, including database connection, JWT authentication, and initial admin user seeding.
+This project uses `appsettings.Development.json` to manage configuration settings, including database connection, JWT authentication, and initial admin user seeding.
 
 ### Key Configuration Sections
 
