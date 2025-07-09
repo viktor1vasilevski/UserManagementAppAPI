@@ -59,7 +59,6 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
             }
         };
     }
-
     public async Task<ApiResponse<UserRegisterDTO>> UserRegisterAsync(UserRegisterRequest request)
     {
         var userExist = await _userRepository.ExistsAsync(x =>
@@ -116,7 +115,6 @@ public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configu
             };
         }
     }
-
     private string GenerateJwtToken(User user)
     {
         var secretKey = _configuration["JwtSettings:Secret"] ?? "AlternativeSecretKeyOfAtLeast32Characters!";
