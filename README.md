@@ -1,4 +1,4 @@
-# User Management API (.NET 8)
+# User Management API (.NET 9)
 
 A RESTful Web API built with ASP.NET Core 9 for user registration, authentication, and role-based authorization.
 
