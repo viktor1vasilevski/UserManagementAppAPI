@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Repositories;
 
-public class SqlUnitOfWork<TContext> : IDisposable, IUnitOfWork<TContext> where TContext : DbContext, new()
+public class SqlUnitOfWork<TContext> : IDisposable, IUnitOfWork<TContext> where TContext : DbContext
 {
-    private TContext _context;
+    private readonly TContext _context;
 
     public SqlUnitOfWork(TContext context)
     {
-        _context = context;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
     public void DetachAllEntities()
@@ -29,15 +29,6 @@ public class SqlUnitOfWork<TContext> : IDisposable, IUnitOfWork<TContext> where 
     public IGenericRepository<TEntity> GetGenericRepository<TEntity>() where TEntity : class
     {
         return new SqlGenericRepository<TEntity, TContext>(_context);
-    }
-
-    public void Restart()
-    {
-        if (_context != null)
-        {
-            _context.Dispose();
-        }
-        _context = new TContext();
     }
 
     public TContext ReturnContext() => _context;

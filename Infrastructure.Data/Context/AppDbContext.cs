@@ -6,20 +6,12 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure.Data.Context;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor)
+    : DbContext(options)
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
-    public AppDbContext()
-    {
-
-    }
-    public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
-
-    public DbSet<User> Users { get; set; }
+    public DbSet<User> Users => Set<User>();
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
@@ -39,8 +31,7 @@ public class AppDbContext : DbContext
                 entity.Created = DateTime.Now;
                 entity.CreatedBy = username;
             }
-
-            if (entry.State == EntityState.Modified)
+            else if (entry.State == EntityState.Modified)
             {
                 entry.Property("Created").IsModified = false;
                 entry.Property("CreatedBy").IsModified = false;
@@ -52,6 +43,7 @@ public class AppDbContext : DbContext
 
         return await base.SaveChangesAsync(cancellationToken);
     }
+
     public override int SaveChanges() =>
           SaveChangesAsync().GetAwaiter().GetResult();
 
@@ -60,3 +52,4 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 }
+

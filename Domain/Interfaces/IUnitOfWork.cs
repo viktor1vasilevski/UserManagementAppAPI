@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces;
 
-public interface IUnitOfWork<TContext> where TContext : DbContext, new()
+public interface IUnitOfWork<TContext> where TContext : DbContext
 {
     IGenericRepository<TEntity> GetGenericRepository<TEntity>() where TEntity : class;
     void Dispose();
@@ -10,7 +10,6 @@ public interface IUnitOfWork<TContext> where TContext : DbContext, new()
     Task SaveChangesAsync();
     void RevertChanges();
     void DetachAllEntities();
-    void Restart();
     TContext ReturnContext();
 
 }
