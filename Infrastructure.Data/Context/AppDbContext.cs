@@ -39,16 +39,14 @@ public class AppDbContext : DbContext
                 entity.Created = DateTime.Now;
                 entity.CreatedBy = username;
             }
-            else
-            {
-                Entry(entity).Property(p => p.Created).IsModified = false;
-                Entry(entity).Property(p => p.CreatedBy).IsModified = false;
-            }
 
             if (entry.State == EntityState.Modified)
             {
-                ((AuditableBaseEntity)entry.Entity).LastModified = DateTime.Now;
-                ((AuditableBaseEntity)entry.Entity).LastModifiedBy = username;
+                entry.Property("Created").IsModified = false;
+                entry.Property("CreatedBy").IsModified = false;
+
+                entity.LastModified = DateTime.Now;
+                entity.LastModifiedBy = username;
             }
         }
 
