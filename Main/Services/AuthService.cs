@@ -10,7 +10,6 @@ using Main.Interfaces;
 using Main.Requests.Auth;
 using Main.Responses;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,7 +17,7 @@ using System.Text;
 
 namespace Main.Services;
 
-public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configuration, ILogger<AuthService> _logger) : IAuthService
+public class AuthService(IUnitOfWork<AppDbContext> _uow, IConfiguration _configuration) : IAuthService
 {
     private readonly IGenericRepository<User> _userRepository = _uow.GetGenericRepository<User>();
 

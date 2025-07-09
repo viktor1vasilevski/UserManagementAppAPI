@@ -10,11 +10,10 @@ using Main.Extension;
 using Main.Interfaces;
 using Main.Requests.User;
 using Main.Responses;
-using Microsoft.Extensions.Logging;
 
 namespace Main.Services;
 
-public class UserService(IUnitOfWork<AppDbContext> _uow, ILogger<AuthService> _logger) : IUserService
+public class UserService(IUnitOfWork<AppDbContext> _uow) : IUserService
 {
     private readonly IGenericRepository<User> _userRepository = _uow.GetGenericRepository<User>();
 
