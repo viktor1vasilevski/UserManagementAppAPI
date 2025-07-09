@@ -96,6 +96,28 @@ This project uses `appsettings.json` and `appsettings.Development.json` files to
 }
 ```
 
+### Local Development Configuration
+
+- `appsettings.Development.json` is **excluded from source control** via `.gitignore`.
+- This file should be created manually on each developer’s machine.
+- It contains **sensitive values** like actual connection strings, JWT secrets, and admin passwords that should not be shared or committed.
+- During development, ASP.NET Core automatically loads this file **after** `appsettings.json`, overriding shared settings.
+
+#### Example `appsettings.Development.json`:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=UserManagementDB;Trusted_Connection=True;Encrypt=False"
+  },
+  "JwtSettings": {
+    "Secret": "YourSuperSecretKeyOfAtLeast32Characters!"
+  },
+  "SeedAdmin": {
+    "Password": "Admin@123"
+  }
+}
+```
 
 ## Unit Testing
 
