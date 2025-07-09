@@ -67,35 +67,6 @@ This project is organized into five main layers to separate concerns and promote
 
 ## Configuration
 
-This project uses `appsettings.json` and `appsettings.Development.json` files to manage configuration settings.
-
-### Committed Configuration
-
-- Only `appsettings.json` is committed to the repository.
-- It contains placeholder values for sensitive information like connection strings, JWT secrets, and admin passwords.
-- Example of `appsettings.json`:
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "DefaultConnection": "REPLACE_WITH_YOUR_CONNECTION_STRING"
-  },
-  "JwtSettings": {
-    "Secret": "REPLACE_WITH_YOUR_SECRET_KEY"
-  },
-  "SeedAdmin": {
-    "Password": "REPLACE_WITH_ADMIN_PASSWORD"
-  }
-}
-```
-
 ### Local Development Configuration
 
 - `appsettings.Development.json` is **excluded from source control** via `.gitignore`.
