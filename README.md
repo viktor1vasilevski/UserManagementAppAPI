@@ -83,3 +83,13 @@ This project uses `appsettings.json` to manage configuration settings, including
 
 
 
+## Unit Testing
+
+This project includes comprehensive unit tests covering core services and domain models to ensure correctness and maintainability.
+
+### Testing Frameworks & Tools
+
+- **xUnit**: Primary testing framework.
+- **Moq**: Mocking dependencies like repositories and unit of work.
+
+
