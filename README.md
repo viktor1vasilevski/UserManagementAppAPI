@@ -22,7 +22,7 @@ A RESTful Web API built with ASP.NET Core 9 for user registration, authenticatio
 
 This project is organized into five main layers to separate concerns and promote maintainability:
 
-- **Domain**: Contains core business entities, domain logic, and domain services implementing the business rules and invariants.
+- **Domain**: Contains core business entities, domain logic, domain exceptions and domain services implementing the business rules and invariants.
 - **Infrastructure.Data**: Implements data access, Entity Framework Core DbContext, repositories, and database migrations.
 - **Infrastructure.IoC**: Handles dependency injection and service registrations.
 - **Main**: Contains application-level services, validations (FluentValidation), and business workflows.
