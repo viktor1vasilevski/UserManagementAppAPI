@@ -41,7 +41,7 @@ This project is organized into five main layers to separate concerns and promote
 
 - The API exposes RESTful endpoints for user registration, authentication, and user management.
 - Endpoints follow REST conventions with appropriate HTTP methods and status codes.
-- Since this is an interview project, no automated API documentation (like Swagger) is currently included.
+- Swagger for interactive API documentation
 - You can explore and test the API using tools like Postman or curl with the following endpoints:
 
   - `POST /auth/register` — Register a new user (requires authorization).
