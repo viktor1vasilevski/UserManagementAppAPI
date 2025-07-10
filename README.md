@@ -33,7 +33,6 @@ This project is organized into five main layers to separate concerns and promote
 
 - The project uses **Entity Framework Core** as the ORM to interact with a SQL Server database.
 - The database schema is managed through EF Core **migrations**, ensuring version control of the database structure.
-- On application startup, the database context applies any pending migrations automatically.
 - An initial **admin** is seeded into the database during startup using a configurable password from the application settings.
 - Data access follows the **Repository** and **Unit of Work** patterns to encapsulate database operations and maintain transaction integrity.
 
