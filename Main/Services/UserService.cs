@@ -19,18 +19,18 @@ public class UserService(IUnitOfWork<AppDbContext> _uow) : IUserService
 
     public ApiResponse<List<UserDetailsDTO>> GetUsers(UserRequest request)
     {
-        var products = _userRepository.GetAsQueryableWhereIf(x =>         
+        var users = _userRepository.GetAsQueryableWhereIf(x =>         
             x.WhereIf(!String.IsNullOrEmpty(request.Username), x => x.Username.ToLower().Contains(request.Username.ToLower())));
 
-        var totalCount = products.Count();
+        var totalCount = users.Count();
 
         if (request.Skip.HasValue)
-            products = products.Skip(request.Skip.Value);
+            users = users.Skip(request.Skip.Value);
 
         if (request.Take.HasValue)
-            products = products.Take(request.Take.Value);
+            users = users.Take(request.Take.Value);
 
-        var usersDTO = products.Select(x => new UserDetailsDTO
+        var usersDTO = users.Select(x => new UserDetailsDTO
         {
             Id = x.Id,
             FirstName = x.FirstName,
