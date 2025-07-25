@@ -9,10 +9,8 @@ namespace WebAPI.Controllers;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 [Route("api/[controller]")]
 [ApiController]
-public class UserController(IUserService userService) : BaseController
+public class UserController(IUserService _userService) : BaseController
 {
-    private readonly IUserService _userService = userService;
-
 
     [HttpGet]
     public IActionResult Get([FromQuery] UserRequest request)

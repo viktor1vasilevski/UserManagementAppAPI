@@ -8,11 +8,8 @@ namespace WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController(IAuthService authService) : BaseController
+public class AuthController(IAuthService _authService) : BaseController
 {
-    private readonly IAuthService _authService = authService;
-
-
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync([FromBody] UserLoginRequest request)
     {
